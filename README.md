@@ -21,6 +21,37 @@ A revolutionary loyalty program platform that combines blockchain technology, ga
 - **Framer Motion** for smooth animations
 - **TailwindCSS** with custom gaming theme
 
+## 🔗 Integrated Soroban Token Contract
+
+This project includes a complete Soroban token contract implementation from [https://github.com/Halfgork/soroban-token-contract](https://github.com/Halfgork/soroban-token-contract). The contract provides:
+
+### Token Features
+- **Standard Token Operations**: Mint, burn, transfer, and balance management
+- **Authorization System**: Allowance mechanism for third-party spending  
+- **Admin Control**: Administrative functions and permission management
+- **Metadata Support**: Token name, symbol, and decimal configuration
+
+### Contract Structure
+```
+soroban-token-contract/
+├── src/
+│   ├── admin.rs           # Administrator functions
+│   ├── allowance.rs       # Token spending permissions
+│   ├── balance.rs         # Balance management
+│   ├── contract.rs        # Main contract implementation
+│   ├── metadata.rs        # Token metadata
+│   ├── storage_types.rs   # Storage data structures
+│   └── lib.rs            # Contract entry point
+├── Cargo.toml            # Rust dependencies
+└── README.md             # Contract documentation
+```
+
+### Integration with Loyalty System
+- **Points as Tokens**: Loyalty points are represented as Soroban tokens
+- **Secure Transfers**: All point transactions secured by smart contracts
+- **Transparent Operations**: Blockchain provides full transaction history
+- **No WASM in Frontend**: Frontend only uses deployed contract addresses
+
 ## 🏗️ Architecture
 
 ### Frontend Structure
