@@ -1,0 +1,288 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15.9%;
+    --ring: 262 83% 58%;
+    --radius: 0.5rem;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-game-bg text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer components {
+  /* Gaming-inspired button styles */
+  .btn-game {
+    @apply relative px-6 py-3 bg-purple-gradient text-white font-semibold rounded-xl;
+    @apply shadow-lg hover:shadow-xl transition-all duration-300;
+    @apply before:absolute before:inset-0 before:bg-white before:opacity-20 before:rounded-xl;
+    @apply before:scale-x-0 hover:before:scale-x-100 before:transition-transform before:duration-300;
+    @apply hover:-translate-y-1 active:translate-y-0;
+  }
+  
+  .btn-game-secondary {
+    @apply relative px-6 py-3 bg-game-surface border-2 border-primary-500 text-primary-400 font-semibold rounded-xl;
+    @apply hover:bg-primary-500 hover:text-white transition-all duration-300;
+    @apply hover:-translate-y-1 active:translate-y-0;
+  }
+  
+  /* Card styles */
+  .card-game {
+    @apply bg-game-surface border border-primary-800/30 rounded-2xl p-6;
+    @apply shadow-lg backdrop-blur-sm;
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.8) 0%, rgba(22, 33, 62, 0.6) 100%);
+  }
+  
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-2 hover:shadow-2xl;
+    @apply hover:shadow-primary-500/20;
+  }
+  
+  /* Progress bars */
+  .progress-bar {
+    @apply w-full bg-game-accent rounded-full h-3 overflow-hidden;
+  }
+  
+  .progress-fill {
+    @apply h-full bg-purple-gradient rounded-full transition-all duration-1000 ease-out;
+    background: linear-gradient(90deg, #a855f7 0%, #f59e0b 100%);
+  }
+  
+  /* Badge styles */
+  .badge-common {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply bg-gray-100 text-gray-700 border border-gray-300;
+  }
+  
+  .badge-rare {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply bg-blue-100 text-blue-700 border border-blue-300;
+  }
+  
+  .badge-epic {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply bg-purple-100 text-purple-700 border border-purple-300;
+  }
+  
+  .badge-legendary {
+    @apply inline-flex items-center px-3 py-1 rounded-full text-xs font-medium;
+    @apply bg-yellow-100 text-yellow-700 border border-yellow-300;
+  }
+  
+  /* Glass morphism effect */
+  .glass {
+    @apply backdrop-blur-md bg-white/10 border border-white/20;
+  }
+  
+  /* Animated gradient text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-purple-400 via-pink-500 to-red-500 bg-clip-text text-transparent;
+    background-size: 200% 200%;
+    animation: gradient-shift 3s ease infinite;
+  }
+  
+  /* Loading spinner */
+  .spinner {
+    @apply w-6 h-6 border-2 border-primary-200 border-t-primary-500 rounded-full;
+    animation: spin 1s linear infinite;
+  }
+  
+  /* Floating animation */
+  .float {
+    animation: float 6s ease-in-out infinite;
+  }
+  
+  /* Glow effect */
+  .glow {
+    @apply relative;
+  }
+  
+  .glow::before {
+    content: '';
+    @apply absolute inset-0 rounded-xl bg-purple-gradient opacity-75 blur-xl;
+    z-index: -1;
+    animation: glow 2s ease-in-out infinite alternate;
+  }
+  
+  /* Achievement unlock animation */
+  .achievement-unlock {
+    animation: achievement-pop 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+  
+  /* Streak fire effect */
+  .streak-fire {
+    @apply relative text-orange-500;
+  }
+  
+  .streak-fire::after {
+    content: '🔥';
+    @apply absolute -top-1 -right-1 text-xs;
+    animation: flicker 1.5s ease-in-out infinite alternate;
+  }
+  
+  /* Level up effect */
+  .level-up {
+    @apply relative;
+    animation: level-up 1s ease-out;
+  }
+  
+  /* Mission complete effect */
+  .mission-complete {
+    @apply bg-green-500/20 border-green-500/50;
+    animation: mission-pulse 0.8s ease-out;
+  }
+}
+
+/* Keyframe animations */
+@keyframes gradient-shift {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+@keyframes glow {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+@keyframes achievement-pop {
+  0% {
+    transform: scale(0) rotate(-180deg);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.2) rotate(-90deg);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+    opacity: 1;
+  }
+}
+
+@keyframes flicker {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes level-up {
+  0% {
+    transform: scale(1);
+  }
+  25% {
+    transform: scale(1.1) rotateZ(5deg);
+  }
+  75% {
+    transform: scale(1.05) rotateZ(-2deg);
+  }
+  100% {
+    transform: scale(1) rotateZ(0deg);
+  }
+}
+
+@keyframes mission-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.7);
+  }
+  70% {
+    transform: scale(1.02);
+    box-shadow: 0 0 0 10px rgba(34, 197, 94, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-game-accent;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-primary-600 rounded-full;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-primary-500;
+}
+
+/* Selection styling */
+::selection {
+  @apply bg-primary-500/30 text-white;
+}
+
+/* Focus outline */
+.focus-visible {
+  @apply outline-none ring-2 ring-primary-500 ring-offset-2 ring-offset-game-bg;
+} 
