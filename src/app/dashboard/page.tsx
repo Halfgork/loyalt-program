@@ -2,11 +2,13 @@
 
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { useWalletStore } from '@/stores/walletStore';
+import { useWallet } from '@/contexts/WalletContext';
 import { useGameStore } from '@/stores/gameStore';
 import { TokenOperations } from '@/lib/stellar/tokenOperations';
-import { Coins, Trophy, Target, Gift, User, Settings, Crown, Star, Zap, Calendar, TrendingUp } from 'lucide-react';
+import { Coins, Trophy, Target, Gift, User, Settings, Crown, Star, Zap, Calendar, TrendingUp, Wallet } from 'lucide-react';
 import Link from 'next/link';
+import { WalletConnectButton } from '@/components/WalletConnectButton';
+import { Mission } from '@/types/gamification';
 
 // Components
 import UserLevelProgress from '@/components/UserLevelProgress';
@@ -16,10 +18,21 @@ import RewardsGrid from '@/components/RewardsGrid';
 import PointsBalance from '@/components/PointsBalance';
 
 export default function Dashboard() {
-  const { isConnected, publicKey, connectWallet } = useWalletStore();
-  const { userLevel, totalPoints, achievements, missions, claimReward } = useGameStore();
+  const { isConnected, publicKey } = useWallet();
+  const { 
+    userLevel, 
+    totalXP, 
+    achievements, 
+    unlockedAchievements, 
+    dailyMissions, 
+    weeklyMissions,
+    specialMissions 
+  } = useGameStore();
   const [tokenBalance, setTokenBalance] = useState('0');
   const [loading, setLoading] = useState(false);
+
+  // Combine all missions
+  const allMissions = [...dailyMissions, ...weeklyMissions, ...specialMissions];
 
   useEffect(() => {
     if (isConnected && publicKey) {
@@ -45,17 +58,12 @@ export default function Dashboard() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="card-game text-center max-w-md mx-auto">
-          <Crown className="h-16 w-16 text-gold-500 mx-auto mb-6" />
+          <Wallet className="h-16 w-16 text-primary-500 mx-auto mb-6" />
           <h2 className="text-2xl font-bold mb-4 gradient-text">Connect Your Wallet</h2>
           <p className="text-gray-300 mb-6">
             Connect your Stellar wallet to start earning loyalty points and unlocking rewards.
           </p>
-          <button
-            onClick={connectWallet}
-            className="btn-game w-full"
-          >
-            Connect Wallet
-          </button>
+          <WalletConnectButton size="large" text="Connect Wallet to Continue" />
         </div>
       </div>
     );
@@ -72,21 +80,21 @@ export default function Dashboard() {
     {
       icon: Star,
       label: 'Current Level',
-      value: userLevel.toString(),
-      change: 'Level ' + (userLevel - 1),
+      value: userLevel.level.toString(),
+      change: 'XP: ' + totalXP.toString(),
       trend: 'up'
     },
     {
       icon: Trophy,
       label: 'Achievements',
-      value: achievements.filter(a => a.unlocked).length.toString(),
+      value: unlockedAchievements.length.toString(),
       change: '+3 this week',
       trend: 'up'
     },
     {
       icon: Target,
       label: 'Active Missions',
-      value: missions.filter(m => m.status === 'active').length.toString(),
+      value: allMissions.filter((m: Mission) => m.status === 'active').length.toString(),
       change: '2 completing',
       trend: 'neutral'
     }
@@ -172,10 +180,10 @@ export default function Dashboard() {
                 Active Missions
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {missions
-                  .filter(mission => mission.status === 'active')
+                {allMissions
+                  .filter((mission: Mission) => mission.status === 'active')
                   .slice(0, 4)
-                  .map((mission, index) => (
+                  .map((mission: Mission, index: number) => (
                     <MissionCard key={mission.id} mission={mission} />
                   ))}
               </div>
@@ -200,15 +208,18 @@ export default function Dashboard() {
               </h2>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {achievements
-                  .filter(achievement => achievement.unlocked)
+                  .filter(achievement => unlockedAchievements.includes(achievement.id))
                   .slice(0, 4)
                   .map((achievement, index) => (
-                    <AchievementCard key={achievement.id} achievement={achievement} />
+                    <AchievementCard 
+                      key={achievement.id} 
+                      achievement={{...achievement, unlocked: true}}
+                    />
                   ))}
               </div>
               <Link 
                 href="/achievements" 
-                className="inline-flex items-center text-primary-400 hover:text-primary-300 mt-4"
+                className="inline-flex items-center text-gold-400 hover:text-gold-300 mt-4"
               >
                 View All Achievements
                 <Trophy className="h-4 w-4 ml-1" />
@@ -220,104 +231,52 @@ export default function Dashboard() {
           <div className="space-y-8">
             {/* Quick Actions */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.5 }}
               className="card-game"
             >
               <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
               <div className="space-y-3">
-                <Link href="/earn" className="btn-game-secondary w-full justify-center">
-                  <Zap className="h-4 w-4 mr-2" />
-                  Earn Points
-                </Link>
-                <Link href="/rewards" className="btn-game-secondary w-full justify-center">
-                  <Gift className="h-4 w-4 mr-2" />
+                <Link href="/rewards" className="block w-full btn-game text-left">
+                  <Gift className="h-4 w-4 mr-2 inline" />
                   Browse Rewards
                 </Link>
-                <Link href="/missions" className="btn-game-secondary w-full justify-center">
-                  <Target className="h-4 w-4 mr-2" />
+                <Link href="/missions" className="block w-full btn-game-secondary text-left">
+                  <Target className="h-4 w-4 mr-2 inline" />
                   View Missions
                 </Link>
-                <Link href="/leaderboard" className="btn-game-secondary w-full justify-center">
-                  <Crown className="h-4 w-4 mr-2" />
+                <Link href="/leaderboard" className="block w-full btn-game-secondary text-left">
+                  <Trophy className="h-4 w-4 mr-2 inline" />
                   Leaderboard
                 </Link>
               </div>
             </motion.div>
 
-            {/* Featured Rewards */}
+            {/* Wallet Info */}
             <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6 }}
               className="card-game"
             >
-              <h3 className="text-lg font-semibold text-white mb-4">Featured Rewards</h3>
-              <div className="space-y-4">
-                <div className="border border-dark-600 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-white">Premium Discount</h4>
-                    <span className="text-gold-500 font-bold">500 PTS</span>
-                  </div>
-                  <p className="text-gray-400 text-sm mb-3">25% off your next purchase</p>
-                  <button className="btn-game-secondary w-full text-sm">
-                    Redeem Now
-                  </button>
-                </div>
-                
-                <div className="border border-dark-600 rounded-lg p-4">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="font-medium text-white">Free Shipping</h4>
-                    <span className="text-gold-500 font-bold">200 PTS</span>
-                  </div>
-                  <p className="text-gray-400 text-sm mb-3">Free shipping on any order</p>
-                  <button className="btn-game-secondary w-full text-sm">
-                    Redeem Now
-                  </button>
-                </div>
-              </div>
-              
-              <Link 
-                href="/rewards" 
-                className="inline-flex items-center text-primary-400 hover:text-primary-300 mt-4 text-sm"
-              >
-                View All Rewards
-                <Gift className="h-3 w-3 ml-1" />
-              </Link>
-            </motion.div>
-
-            {/* Activity Feed */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
-              className="card-game"
-            >
-              <h3 className="text-lg font-semibold text-white mb-4">Recent Activity</h3>
+              <h3 className="text-lg font-semibold text-white mb-4">Wallet Info</h3>
               <div className="space-y-3">
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
-                  <div className="flex-1">
-                    <p className="text-white text-sm">Earned 50 points from purchase</p>
-                    <p className="text-gray-400 text-xs">2 hours ago</p>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Network</span>
+                  <span className="text-white">Stellar Testnet</span>
                 </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-gold-500 rounded-full mt-2"></div>
-                  <div className="flex-1">
-                    <p className="text-white text-sm">Unlocked "First Purchase" badge</p>
-                    <p className="text-gray-400 text-xs">1 day ago</p>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Address</span>
+                  <span className="text-white font-mono text-sm">
+                    {publicKey ? `${publicKey.slice(0, 6)}...${publicKey.slice(-6)}` : 'Not connected'}
+                  </span>
                 </div>
-                
-                <div className="flex items-start space-x-3">
-                  <div className="w-2 h-2 bg-primary-500 rounded-full mt-2"></div>
-                  <div className="flex-1">
-                    <p className="text-white text-sm">Completed daily mission</p>
-                    <p className="text-gray-400 text-xs">2 days ago</p>
-                  </div>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-400">Balance</span>
+                  <span className="text-white">
+                    {loading ? 'Loading...' : `${tokenBalance} LYL`}
+                  </span>
                 </div>
               </div>
             </motion.div>

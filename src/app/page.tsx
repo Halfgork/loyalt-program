@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { Coins, Trophy, Users, Zap, Star, Gift, Target, Crown } from 'lucide-react';
+import { Coins, Trophy, Users, Zap, Star, Gift, Target, Crown, Wallet } from 'lucide-react';
+import { WalletConnectButton } from '@/components/WalletConnectButton';
 
 export default function LandingPage() {
   const features = [
@@ -66,18 +67,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex items-center space-x-4">
-            <Link
-              href="/dashboard"
-              className="px-4 py-2 text-gray-300 hover:text-white transition-colors"
-            >
-              Sign In
-            </Link>
-            <Link
-              href="/dashboard"
-              className="btn-game"
-            >
-              Get Started
-            </Link>
+            <WalletConnectButton />
           </div>
         </div>
       </nav>
@@ -97,9 +87,11 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-6 mb-16">
-            <Link href="/dashboard" className="btn-game text-lg px-8 py-4">
-              Start Earning Points
-            </Link>
+            <WalletConnectButton 
+              variant="primary" 
+              size="large"
+              text="Connect Wallet & Start Earning"
+            />
             <Link href="#features" className="btn-game-secondary text-lg px-8 py-4">
               Learn More
             </Link>
@@ -204,10 +196,11 @@ export default function LandingPage() {
             Join thousands of users who are already earning rewards and leveling up 
             their shopping experience with LoyaltyMax.
           </p>
-          <Link href="/dashboard" className="btn-game text-lg px-8 py-4 inline-flex items-center gap-2">
-            <Target className="h-5 w-5" />
-            Start Your Journey
-          </Link>
+          <WalletConnectButton 
+            variant="primary" 
+            size="large"
+            text="Connect Wallet & Start Your Journey"
+          />
         </div>
       </section>
 
